@@ -7,7 +7,8 @@ import {
   View,
   Text,
   StatusBar,
-  FlatList
+  FlatList,
+  ActivityIndicator
 } from 'react-native';
 
 import {
@@ -26,29 +27,42 @@ class App extends Component{
   constructor(props){
     super(props);
     this.state = {
-      filmes: []
+      filmes: [],
+      loading: true
     };
   }
 
   async componentDidMount(){
     const response = await api.get('r-api/?api=filmes');
     this.setState({
-      filmes: response.data //requisicoes do axios é pelo data
+      filmes: response.data, //requisicoes do axios é pelo data
+      loading: false
     })
   }
 
   render(){
-    return(
-      <View style={styles.container}>
-        <FlatList
-        data={this.state.filmes}
-        keyExtractor={item => item.id.toString()} //string
-        renderItem={({item})=> <Filmes data={item}/>}
-        >
-          
-        </FlatList>
-      </View>
-    );
+
+    if(this.state.loading){
+      return(
+        <View style={{alignItems: 'center', flex: 1, justifyContent: 'center'}}>
+          <ActivityIndicator color="#09A6FF" size={40}/>
+        </View>
+      )
+    }else{
+
+      return(
+        <View style={styles.container}>
+          <FlatList
+          data={this.state.filmes}
+          keyExtractor={item => item.id.toString()} //string
+          renderItem={({item})=> <Filmes data={item}/>}
+          >
+            
+          </FlatList>
+        </View>
+      );
+    }
+
   }
 }
 
