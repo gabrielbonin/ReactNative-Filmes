@@ -7,6 +7,7 @@ import {
   View,
   Text,
   StatusBar,
+  FlatList
 } from 'react-native';
 
 import {
@@ -18,23 +19,43 @@ import {
 } from 'react-native/Libraries/NewAppScreen';
 
 import api from './src/services/api';
+import Filmes from './src/filmes';
 
 
 class App extends Component{
+  constructor(props){
+    super(props);
+    this.state = {
+      filmes: []
+    };
+  }
 
-  componentDidMount(){
-    const response = api.get('https://sujeitoprogramador.com/r-api/?api=filmes')
+  async componentDidMount(){
+    const response = await api.get('r-api/?api=filmes');
+    this.setState({
+      filmes: response.data //requisicoes do axios é pelo data
+    })
   }
 
   render(){
     return(
-      <View></View>
+      <View style={styles.container}>
+        <FlatList
+        data={this.state.filmes}
+        keyExtractor={item => item.id.toString()} //string
+        renderItem={({item})=> <Filmes data={item}/>}
+        >
+          
+        </FlatList>
+      </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  
+  container:{
+    flex: 1,
+  }
 });
 
 export default App;
